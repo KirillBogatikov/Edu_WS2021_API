@@ -1,0 +1,1 @@
+insert into airport (iata, name) values (?, ?)

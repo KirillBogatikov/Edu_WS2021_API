@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.4.2</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>org.ws2021</groupId>
+    <artifactId>parent</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+    <repositories>
+        <repository>
+            <id>KirillBogatikov Public</id>
+            <url>https://raw.githubusercontent.com/KirillBogatikov/maven-public/master</url>
+        </repository>
+        <repository>
+            <id>Magic Library</id>
+            <url>https://raw.githubusercontent.com/Magic-Library/maven-public/master</url>
+        </repository>
+        <repository>
+            <id>Projector Solutions Public</id>
+            <url>https://raw.githubusercontent.com/Projector-Solutions/maven-public/master</url>
+        </repository>
+        <repository>
+            <id>Projector Solutions Private</id>
+            <!-- PUBLIC URL, BUT PRIVATE ACCESS :) -->
+            <url>https://raw.githubusercontent.com/Projector-Solutions/maven-private/master</url>
+        </repository>
+    </repositories>
+    <properties>
+        <junit.version>4.13.1</junit.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+    <modules>
+        <module>web</module>
+        <module>data</module>
+        <module>domain</module>
+        <module>util</module>
+    </modules>
+</project>

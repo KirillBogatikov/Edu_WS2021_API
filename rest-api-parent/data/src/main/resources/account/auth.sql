@@ -1,0 +1,1 @@
+select password as hash from users where phone = ?

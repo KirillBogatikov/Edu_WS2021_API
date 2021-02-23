@@ -1,0 +1,1 @@
+insert into place (city, airport, iata) values (?, ?, ?)
