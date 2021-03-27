@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block page_title %}Главная{% endblock %}
+{% block content %}
+    <div id="login-form">
+        <label for="l-login">Логин:</label>
+        <input
+            id="l-login"
+            type="text"
+            minlength="{{ login_min }}"
+            maxlength="{{ login_max }}"
+            required/>
+        <label for="l-password">Пароль:</label>
+        <input
+            id="l-password"
+            type="text"
+            minlength="{{ password_min }}"
+            maxlength="{{ password_max }}"
+            required/>
+        <button onclick="login()">Войти</button>
+    </div>
+    <div id="signup-form">
+        {% csrf_token %}
+        <label for="s-login">Логин:</label>
+        <input
+            id="s-login"
+            type="text"
+            minlength="{{ login_min }}"
+            maxlength="{{ login_max }}"
+            required/>
+        <label for="s-password">Пароль:</label>
+        <input
+            id="s-password"
+            type="text"
+            minlength="{{ password_min }}"
+            maxlength="{{ password_max }}"
+            required/>
+        <label for="password-check">Подтвердите пароль:</label>
+        <input
+            id="password-check"
+            type="text"
+            minlength="{{ password_min }}"
+            maxlength="{{ password_max }}"
+            required/>
+        <label for="last-name">Фамилия:</label>
+        <input
+            id="last-name"
+            type="text"
+            minlength="{{ last_name_min }}"
+            maxlength="{{ last_name_max }}"
+            required/>
+        <label for="first-name">Имя:</label>
+        <input
+            id="first-name"
+            type="text"
+            minlength="{{ first_name_min }}"
+            maxlength="{{ first_name_max }}"
+            required/>
+        <label for="patronymic">Отчество:</label>
+        <input
+            id="patronymic"
+            type="text"
+            minlength="{{ patronymic_min }}"
+            maxlength="{{ patronymic_max }}"
+            required/>
+        <label for="email">E-mail:</label>
+        <input
+            id="email"
+            type="text"
+            minlength="{{ email_min }}"
+            maxlength="{{ email_max }}"
+            required/>
+        <input
+            id="agree"
+            type="checkbox"
+            required/>
+        <button onclick="signup()">Зарегистрироваться</button>
+    </div>
+{% endblock %}

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <title>GroomRoom - {% block page_title %}{% endblock %}</title>
+        <link rel="stylesheet" href="/static/index.css"/>
+        {% block meta %}{% endblock %}
+    </head>
+    <body>
+        <header>
+            Groom Room
+            {% block header %}{% endblock %}
+            {% if authorized %}<button id="logout" onclick="logout()">Выйти</button>{% endif %}
+        </header>
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+        <script src="/static/index.js"></script>
+        <script src="/static/auth.js"></script>
+        {% block scripts %}{% endblock %}
+    </body>
+</html>
