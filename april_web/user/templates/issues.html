@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block page_title %}
+    {% if workplace %}
+    Личный кабинет
+    {% else %}
+    Последние заявки
+    {% endif %}
+{% endblock %}
+{% block meta %}
+    <link rel="stylesheet" href="/static/issues.css?1"/>
+{% endblock %}
+{% block header %}
+    {% if workplace %}
+    <button onclick="index()">Главная</button>
+    {% else %}
+    <button onclick="workplace()">Все заявки</button>
+    {% endif %}
+{% endblock %}
+{% block content %}
+    <div id="issue-container" class="container{% if workplace %} workplace{% endif %}" style="margin-top:{% widthratio issues_count 1 90 %}px">
+    {% if issues_count == 0 %}
+        <span class="no-issues">Нет заявок.</span>
+    {% else %}
+        {% for i in last_issues %}
+            <div class="issue">
+                <span class="pet-name">Питомец {{ i.name }}</span>
+                <span class="issue-status">Статус заявки:
+                    {% if i.status == 0 %}
+                        создана
+                    {% elif i.status == 1 %}
+                        обработка данных
+                    {% else %}
+                        услуга оказана
+                    {% endif %}
+                </span>
+                <br/>
+                <img class="pet-photo" src="/issue/photo/{{ i.pet_photo }}"/>
+                {% if i.status == 2 %}
+                    <img class="result-photo" src="/issue/photo/{{ i.result_photo }}"/>
+                {% endif %}
+                <div class="issue-divider"></div>
+            </div>
+        {% endfor %}
+    {% endif %}
+    </div>
+    {% if workplace %}
+        <div id="form-container" class="container">
+            <div id="create-issue" class="form">
+                <label for="pet-name">Кличка питомца: </label>
+                <input
+                    id="pet-name"
+                    name="name"
+                    type="text"
+                    minlength="{{ pet_name_min }}"
+                    maxlength="{{ pet_name_max }}"
+                    required/>
+                <label for="pet-photo">Фото питомца:</label>
+                <input
+                    id="pet-photo"
+                    name="photo"
+                    type="file"
+                    required/>
+                <button onclick="create_issue()">Создать</button>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+{% block scripts %}
+<script src="/static/issues.js"></script>
+{% endblock %}

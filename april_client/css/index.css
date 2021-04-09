@@ -1,0 +1,87 @@
+HTML, BODY {
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+}
+
+* {
+    font-size: 16pt;
+    font-family: Roboto, Arial; 
+}
+
+HEADER {
+    width: 100%;
+    text-align: center;
+    background: #ffd800;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+UL.nav-list {
+    padding: 25px!important;
+}
+
+UL.no-marker {
+    list-style: none;
+    margin: 0px;
+    padding: 5px;
+}
+
+UL.nav-list LI {
+    display: inline;
+    margin-right: 5px;
+    padding: 10px;   
+}
+
+UL.nav-list LI:hover, UL.nav-list LI[checked] {
+    background: #000;
+    color: #fff;
+    border-radius: 20px 5px 20px 5px;
+}
+
+UL.action-list LI {
+    background: #ddd;
+    padding: 5px;
+    border-radius: 20px 5px 20px 5px;
+    margin-bottom: 10px;
+}
+
+UL.action-list LI:hover {
+    box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.5)
+}
+
+SPAN.no-tasks {
+    color: #aaa;
+}
+
+MAIN {
+    z-index: 0;
+}
+
+DIV.dialog-container {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    padding: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-y: scroll;
+}
+
+DIV.dialog-holder {
+    padding: 0px;
+    margin: 0px;
+}
+
+DIV.shadow {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+}
