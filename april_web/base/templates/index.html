@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% block page_title %}Главная{% endblock %}
 {% block content %}
-    <div id="login-form">
+<div class="container">
+    <div id="login-form" class="form">
         <label for="l-login">Логин:</label>
         <input
             id="l-login"
@@ -9,6 +10,7 @@
             minlength="{{ login_min }}"
             maxlength="{{ login_max }}"
             required/>
+        <br/>
         <label for="l-password">Пароль:</label>
         <input
             id="l-password"
@@ -16,9 +18,11 @@
             minlength="{{ password_min }}"
             maxlength="{{ password_max }}"
             required/>
+        <br/>
         <button onclick="login()">Войти</button>
     </div>
-    <div id="signup-form">
+    <div id="form-divider"></div>
+    <div id="signup-form" class="form">
         {% csrf_token %}
         <label for="s-login">Логин:</label>
         <input
@@ -27,6 +31,7 @@
             minlength="{{ login_min }}"
             maxlength="{{ login_max }}"
             required/>
+        <br/>
         <label for="s-password">Пароль:</label>
         <input
             id="s-password"
@@ -34,6 +39,7 @@
             minlength="{{ password_min }}"
             maxlength="{{ password_max }}"
             required/>
+        <br/>
         <label for="password-check">Подтвердите пароль:</label>
         <input
             id="password-check"
@@ -41,6 +47,7 @@
             minlength="{{ password_min }}"
             maxlength="{{ password_max }}"
             required/>
+        <br/>
         <label for="last-name">Фамилия:</label>
         <input
             id="last-name"
@@ -48,6 +55,7 @@
             minlength="{{ last_name_min }}"
             maxlength="{{ last_name_max }}"
             required/>
+        <br/>
         <label for="first-name">Имя:</label>
         <input
             id="first-name"
@@ -55,6 +63,7 @@
             minlength="{{ first_name_min }}"
             maxlength="{{ first_name_max }}"
             required/>
+        <br/>
         <label for="patronymic">Отчество:</label>
         <input
             id="patronymic"
@@ -62,6 +71,7 @@
             minlength="{{ patronymic_min }}"
             maxlength="{{ patronymic_max }}"
             required/>
+        <br/>
         <label for="email">E-mail:</label>
         <input
             id="email"
@@ -69,10 +79,18 @@
             minlength="{{ email_min }}"
             maxlength="{{ email_max }}"
             required/>
+        <br/>
+        <label
+            style="width: 650px; display: block"
+            for="agree">
+            Согласие с политикой обработки персональных данных:
+        </label>
         <input
             id="agree"
             type="checkbox"
             required/>
+        <br/>
         <button onclick="signup()">Зарегистрироваться</button>
     </div>
+</div>
 {% endblock %}

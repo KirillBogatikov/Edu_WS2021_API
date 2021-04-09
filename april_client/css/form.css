@@ -1,0 +1,60 @@
+﻿.form {
+    max-width: 500px;
+    background: white;
+    padding: 10px 25px 0px 25px;
+    border-radius: 10px 25px 10px 25px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
+.form TD {
+    padding-bottom: 5px;
+}
+
+.form LABEL {
+    display: inline-block;
+}
+
+.form INPUT, .form TEXTAREA {
+    width: 300px;S
+}
+
+INPUT:before {
+    width: 50px;
+    height: 50px;
+}
+
+.form TEXTAREA {
+    resize: vertical;
+    width: 100%;
+    padding: 5px;
+}
+
+BUTTON {
+    width: 60%;
+    margin-left: 20%;
+    background: #ffd800;
+    border: solid 3px #ffd800;
+    border-radius: 25px 10px 25px 10px;
+    margin-top: 15px;
+    padding: 10px;
+    box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.5);
+    outline: none;
+}
+
+BUTTON:focus {
+    box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5);
+}
+
+.form .cancel-text {
+    font-size: 12pt;
+    padding-top: 20px;
+    text-align: center;
+}
+
+#task {
+    z-index: 3;
+}
+
+#subtask {
+    z-index: 5;
+}   

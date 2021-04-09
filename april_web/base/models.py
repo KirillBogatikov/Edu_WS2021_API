@@ -23,6 +23,13 @@ class Auth(Model):
     role = IntegerField()
     objects = Manager()
 
+    def as_json(self):
+        return dict(
+            login=self.login,
+            password=self.password,
+            role=self.role
+        )
+
 
 MinNameLength = 2
 MaxNameLength = 256
@@ -38,6 +45,15 @@ class Bio(Model):
     email = CharField(max_length=MaxEmailLength)
     objects = Manager()
 
+    def as_json(self):
+        return dict(
+            id=self.id,
+            first_name=self.first_name,
+            last_name=self.last_name,
+            patronymic=self.patronymic,
+            email=self.email
+        )
+
 
 class User(Model):
     id = CharField(max_length=IdLength, primary_key=True)
@@ -49,6 +65,13 @@ class User(Model):
     def by_login(cls, login):
         auth = Auth.objects.get(login=login)
         return cls.objects.get(auth=auth)
+
+    def as_json(self):
+        return dict(
+            id=self.id,
+            auth=self.auth.as_json(),
+            bio=self.bio.as_json()
+        )
 
 
 class IssueStatus(Enum):
@@ -67,4 +90,15 @@ class Issue(Model):
     name = CharField(max_length=MaxPetName)
     pet_photo = CharField(max_length=IdLength)
     result_photo = CharField(max_length=IdLength)
+    status = IntegerField()
     objects = Manager()
+
+    def as_json(self):
+        return dict(
+            id=self.id,
+            user=self.user.as_json(),
+            name=self.name,
+            pet_photo=self.pet_photo,
+            result_photo=self.result_photo,
+            status=self.status
+        )

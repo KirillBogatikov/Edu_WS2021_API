@@ -1,9 +1,9 @@
-from django.urls import path, re_path
+from django.urls import path
 
-from user.views import get_issue_photo, user_page, create_issue
+from user.views import get_issue_photo, user_page, save_issue
 
 urlpatterns = {
     path('', user_page),
-    path('save', create_issue),
+    path('save', save_issue),
     path('photo/<w>', get_issue_photo)
 }

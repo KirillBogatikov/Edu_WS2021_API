@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponseNotFound, HttpResponse, HttpResponseForbidden
+from django.http import HttpResponseNotFound, HttpResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render
 
 from base.models import MinLoginLength, MaxLoginLength, MinNameLength, MaxNameLength, MinPasswordLength, \
@@ -12,9 +12,12 @@ from base.models import MinLoginLength, MaxLoginLength, MinNameLength, MaxNameLe
 from base.utils import hex_hash
 from user.views import list_last_issues
 
-
 def index(request):
-    if request.COOKIES.get("user_id") is not None:
+    user_id = request.COOKIES.get("user_id")
+    if user_id is not None:
+        user = User.objects.get(id=user_id)
+        if user.auth.role == Role.Admin.value:
+            return HttpResponseRedirect("/groom")
         return list_last_issues(request)
 
     return render(request, "index.html", {
