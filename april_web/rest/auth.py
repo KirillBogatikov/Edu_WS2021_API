@@ -3,66 +3,105 @@ import hashlib
 import hmac
 import json
 import time
-import uuid
+from uuid import uuid4
 
-from django.conf.global_settings import SECRET_KEY
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 
-
-def sha256_encode(message):
-    return hmac.new(SECRET_KEY.encode(), message.encode(), hashlib.sha256).hexdigest().encode()
-
-
-def sha256_decode(message):
-    return hmac.new(SECRET_KEY.encode(), message.encode(), hashlib.sha256)
+from april_web.settings import SECRET_KEY
+from rest.models import User
 
 
-def b64_encode(value):
-    return base64.b64encode(json.dumps(value).encode()).decode('utf-8')
-
-
-def b64_decode(value):
-    return json.loads(base64.b64decode(value).decode('utf-8'))
-
-
-def signature(data):
-    return base64.b64encode(sha256_encode(data))
-
-
-class JWToken:
-    def __init__(self, user_id, iat=time.time(), exp=None, jti=uuid.uuid4()):
-        self.user_id = str(user_id)
-        self.iat = iat
-        self.exp = int(exp if exp is not None else iat + 7 * 24 * 60 * 60 * 1000)
-        self.jti = str(jti)
-
-    def unsigned(self):
-        header = {"alg": "HS256", "typ": "JWT"}
-        payload = {"user_id": self.user_id, "iat": self.iat, "exp": self.exp, "jti": self.jti}
-        return "{}.{}".format(b64_encode(header), b64_encode(payload))
-
-    def encode(self):
-        data = self.unsigned()
-        return "{}.{}".format(data, signature(data).decode('utf-8'))
+class Hash:
+    __secret_key__ = SECRET_KEY.encode("utf-8")
+    __alg__ = hashlib.sha256
 
     @staticmethod
-    def decode(key):
-        parts = key.split(".")
+    def hash_mac_of(value, hex=False):
+        hm = hmac.new(Hash.__secret_key__, value, Hash.__alg__)
+        return hm.hexdigest() if hex else hm.digest()
 
-        payload = b64_decode(parts[1])
-        token = JWToken(payload['user_id'], payload['iat'], payload['exp'], payload['jti'])
-        if not signature(token.unsigned()) == parts[2].encode('utf-8'):
-            raise PermissionError("Signature invalid")
+    @staticmethod
+    def hash_of(value):
+        return Hash.__alg__(value.encode('utf-8')).hexdigest()
+
+
+class Base64:
+    @staticmethod
+    def encode(value, to_string=True):
+        if type(value) is dict:
+            value = json.dumps(value).encode('utf-8')
+
+        r = base64.b64encode(value)
+        return r.decode('utf-8') if to_string else r
+
+    @staticmethod
+    def decode(value, to_string=True, to_json=False):
+        r = base64.b64decode(value)
+        if to_json:
+            return json.loads(r)
+
+        if to_string:
+            return r.decode('utf-8')
+
+        return r
+
+
+class JWToken():
+    TokenLifeTime = 1 * 24 * 60 * 60 * 1000  # one day in ms
+
+    def __init__(self, user_id, user=None, iat=None, exp=None, jti=None):
+        self.user_id = str(user_id)
+        self.user = user
+        self.iat = round(time.time() if iat is None else iat)
+        self.exp = round(self.iat + JWToken.TokenLifeTime if exp is None else exp)
+        self.jti = str(uuid4()) if jti is None else jti
+
+    def encode(self):
+        header = {'typ': 'JWT', 'alg': 'HS256'}
+        payload = self.__dict__
+        # remove user personal data from token object
+        payload.pop('user')
+
+        unsigned = "{}.{}".format(Base64.encode(header), Base64.encode(payload))
+        return "{}.{}".format(unsigned, JWToken.sign(unsigned))
+
+    @staticmethod
+    def sign(header, payload=None):
+        if payload is not None and header is not None:
+            unsigned = "{}.{}".format(header, payload)
+        else:
+            unsigned = header
+        return Base64.encode(Hash.hash_mac_of(unsigned.encode('utf-8')))
+
+    @staticmethod
+    def decode(value):
+        parts = value.split(".")
+        if not JWToken.sign(parts[0], parts[1]) == parts[2]:
+            raise AuthenticationFailed("Invalid signature")
+
+        payload = Base64.decode(parts[1], to_json=True)
+
+        token = JWToken(user_id=payload['user_id'], iat=int(payload['iat']), exp=int(payload['exp']),
+                        jti=payload['jti'])
+        if token.exp <= time.time():
+            raise AuthenticationFailed("Token is expired")
 
         return token
 
 
 class BearerAuth(BaseAuthentication):
     def authenticate(self, request):
-        token = request.headers.get('Authorization')
-        if token is None or not token.split(" ")[0] == "Bearer":
-            raise AuthenticationFailed()
-        else:
-            jwt = JWToken.decode(token.split(" ")[1])
-            return None, jwt
+        header = request.headers.get('Authorization', "")
+        parts = header.split(" ")
+        if len(parts) < 2 or not parts[0] == "Bearer":
+            raise AuthenticationFailed("Invalid token")
+
+        token = JWToken.decode(parts[1])
+        try:
+            token.user = User.objects.get(id=token.user_id)
+        except Exception as e:
+            print("User not found: ", e)
+            raise AuthenticationFailed("No user with id '{}'".format(token.user_id))
+
+        return None, token

@@ -1,40 +1,32 @@
-import enum
 import re
 
 
-class ValidationModel:
-    def __init__(self, min, max, regex, message):
-        self.min_length = min
-        self.max_length = max
-        self.regex = re.compile(regex)
-        self.message = message
+class ValidationRule:
+    def __init__(self, min_length=1, max_length=128, regex=r'.*'):
+        self.min_length = min_length
+        self.max_length = max_length
+        self.regex = regex
 
-    def is_valid(self, value):
-        return len(self.regex.findall(value)) > 0
+    def validate(self, value, name="Value"):
+        if value is None:
+            raise ValueError("{} is None".format(name))
 
+        if len(value) < self.min_length:
+            raise ValueError("{} too short".format(name))
 
-IDLength = 36  # uuid-4 length
-Login = ValidationModel(4, 32, r'(\w|[_@#$])+', 'a-z, A-Z, 0-9, _, @, #, $')
-Password = ValidationModel(4, 32, r'(\w|[а-яА-Я_])+', 'a-z, A-Z, а-я, А-Я, 0-9, _')
-HashLength = 64  # sha-256 hash length
-Name = ValidationModel(1, 64, r'[a-zA-Zа-яА-Я \-]', 'a-z, A-Z, а-я, А-Я')
-"""
-    Note about phone numbers
-    Most numbers starts with + and country code, i.e. +7(xxx)xxxxxxx - russian 'mobile' phone number
-    Also, some countries use local numbers without + symbol, i.e. russian 'home' phone - xxx-xx-xx or xx-xx-xx
-    Israel, for marking phone as advertisement use * instead of +
-    Theoretically, number is not limited with length 
-"""
-Phone = ValidationModel(1, 128, r'[+*]?[0-9 \-()]+', '')
-"""
-    Note about emails
-    Old libraries use hardcoded domains, i.e. gmail.com or *.com, but now
-    companies can buy own domain. This regex is not perfect, but can basically check email validity.
-"""
-Email = ValidationModel(3, 256, r'\w+@\w+\.\w+', '')
+        if len(value) > self.max_length:
+            raise ValueError("{} too long".format(name))
+
+        if not re.match(self.regex, value, re.IGNORECASE):
+            raise ValueError("{} contains incorrect characters".format(name))
+
+        # OK
 
 
-class Role(enum.Enum):
-    Client = 0
-    Manager = 1
-    Admin = 2
+IdLength = 36  # UUID4 length
+HashLength = 256  # SHA-256 hash length
+LoginRule = ValidationRule(4, 32, r"^[a-z0-9_\-]+$")
+PasswordRule = ValidationRule(8, regex=r"^[a-z0-9_\-!@#$%^&*~]+$")
+NameRule = ValidationRule(regex=r"^[a-zа-яё ]+$")
+EmailRule = ValidationRule(3, regex=r"^[a-z0-9_\-]+@[a-z0-9_\-]+[.][a-z0-9_\-]+$")
+PhoneRule = ValidationRule(1, regex=r"^[+*]?[0-9\-() ]+$")

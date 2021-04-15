@@ -13,8 +13,6 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-from rest.auth import JWToken
-
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
 
@@ -22,7 +20,7 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY', "test_secret_key_dont_use_in_production")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -39,8 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest.apps.RestConfig',
-    'rest_framework'
+    'rest_framework',
+    'rest'
 ]
 
 MIDDLEWARE = [
@@ -52,12 +50,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest.auth.BearerAuth'
-    ]
-}
 
 ROOT_URLCONF = 'april_web.urls'
 
@@ -79,6 +71,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'april_web.wsgi.application'
 
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATE_CLASSES": [
+        'rest.BearerAuth'
+    ]
+}
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -89,6 +86,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators

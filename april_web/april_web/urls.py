@@ -1,41 +1,30 @@
+"""april_web URL Configuration
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/3.1/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  path('', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.urls import include, path
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+"""
+from django.contrib import admin
 from django.urls import path, include
-from rest_framework import routers, serializers, viewsets
+from rest_framework import routers
 
-from rest.models import User
+from rest.views import list_users, login, signup
 
+r = routers.DefaultRouter()
+r.register(r'user', list_users, 'list users')
 
-class UserSerializer(serializers.ModelSerializer):
-    login = serializers.CharField(source='auth.login')
-    password = serializers.CharField(source='auth.password')
-    first_name = serializers.CharField(source='personal_data.first_name')
-    last_name = serializers.CharField(source='personal_data.last_name')
-    patronymic = serializers.CharField(source='personal_data.patronymic')
-    phone = serializers.CharField(source='personal_data.phone')
-    email = serializers.CharField(source='personal_data.email')
-
-    class Meta:
-        model = User
-        depth = 1
-        exclude = ['personal_data', 'auth']
-
-    def update(self, instance, validated_data):
-        print(validated_data)
-        instance.auth = validated_data.get('auth', instance.auth)
-        instance.personal_data.first_name = validated_data.get('personal_data.first_name', instance.personal_data.first_name)
-        instance.personal_data.last_name = validated_data.get('personal_data.last_name', instance.personal_data.last_name)
-        instance.save()
-        return instance
-
-
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-
-router = routers.DefaultRouter()
-router.register(r'users', UserViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    path(r'users', list_users),
+    path(r'auth/login', login),
+    path(r'auth/signup', signup)
 ]
